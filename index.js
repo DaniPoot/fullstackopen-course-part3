@@ -1,6 +1,14 @@
 const express = require('express')
 const app = express()
 
+app.get('/info', (request, response) => {
+  const date = new Date()
+  response.send(`
+    <p>Phonebook has infor for 2 people</p>
+    <p>${date}</p>
+  `)
+})
+
 app.get('/api/persons', (request, response) => {
   response.json([
     { 
