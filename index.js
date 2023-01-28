@@ -44,8 +44,27 @@ app.post('/api/persons', (request, response) => {
   const { name, number } = body
   const id = Math.floor(Math.random() * 10001)
   const person = { id, name, number }
+
+
+  if (!name) {
+    return response.status(409).json({ 
+      error: 'name missing' 
+    })
+  }
+  if (!number) {
+    return response.status(409).json({ 
+      error: 'number missing' 
+    })
+  }
+
+  const nameExist = persons.some(person => person.name == name)
+  if (nameExist) {
+    return response.status(409).json({ 
+      error: 'name must be unique'
+    })
+  }
   persons.push(person)
-  response.json(person)
+  response.status(201).json(person)
 })
 
 app.get('/api/persons/:id', (request, response) => {
