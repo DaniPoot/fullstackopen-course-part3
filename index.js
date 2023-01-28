@@ -1,6 +1,7 @@
-const { request, response } = require('express')
 const express = require('express')
 const app = express()
+
+app.use(express.json())
 
 let persons = [
   { 
@@ -34,7 +35,17 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
+  console.log(persons)
   response.json(persons)
+})
+
+app.post('/api/persons', (request, response) => {
+  const { body } = request 
+  const { name, number } = body
+  const id = Math.floor(Math.random() * 10001)
+  const person = { id, name, number }
+  persons.push(person)
+  response.json(person)
 })
 
 app.get('/api/persons/:id', (request, response) => {
