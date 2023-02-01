@@ -23,7 +23,8 @@ const Entry = mongoose.model('Entry', entySchema)
 if (process.argv.length === 3) {
   Entry.find({}).then(result => {
     result.forEach(note => {
-      console.log(note)
+      const { name, number } = note
+      console.log(name, number)
     })
     mongoose.connection.close()
   })
