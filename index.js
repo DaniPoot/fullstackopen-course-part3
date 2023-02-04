@@ -84,10 +84,11 @@ app.post('/api/persons', (request, response, next) => {
 
 app.get('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
-  const person = persons.find(person => person.id == id)
-
-  if (!person) response.status(404).end()
-  response.json(person)
+  const person = Entry.findById(id)
+  .then(entry => {
+    response.status(201).json(entry)
+  })
+  .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
