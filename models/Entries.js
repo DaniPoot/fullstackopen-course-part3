@@ -14,8 +14,13 @@ mongoose.connect(url)
 
 
 const entySchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: 3
+  },
+  number: {
+    type: String,
+  }
 })
 
 entySchema.set('toJSON', {
