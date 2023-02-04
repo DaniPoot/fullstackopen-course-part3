@@ -94,7 +94,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 app.put('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
   const { name, number } = request.body
-  Entry.findOneAndUpdate({ name }, { number }, { new: true })
+  Entry.findOneAndUpdate({ name }, { number }, { new: true, runValidators: true, context: 'query'  })
   .then(savedEntry => {
     response.status(201).json(savedEntry)
   })

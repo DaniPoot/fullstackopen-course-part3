@@ -20,6 +20,13 @@ const entySchema = new mongoose.Schema({
   },
   number: {
     type: String,
+    validate: {
+      validator: function(v) {
+        return /^\d{2,3}-\d*/.test(v);
+      },
+      message: '{VALUE} is not a valid phone number!'
+    },
+    minLength: 8
   }
 })
 
