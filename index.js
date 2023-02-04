@@ -11,26 +11,26 @@ morgan.token('body', request => JSON.stringify(request.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(express.static('build'))
 
-let persons = [
-  { 
-    "id": 1,
-    "name": "Arto Hellas", 
-    "number": "040-123456"
+const persons = [
+  {
+    id: 1,
+    name: 'Arto Hellas',
+    number: '040-123456'
   },
-  { 
-    "id": 2,
-    "name": "Ada Lovelace", 
-    "number": "39-44-5323523"
+  {
+    id: 2,
+    name: 'Ada Lovelace',
+    number: '39-44-5323523'
   },
-  { 
-    "id": 3,
-    "name": "Dan Abramov", 
-    "number": "12-43-234345"
+  {
+    id: 3,
+    name: 'Dan Abramov',
+    number: '12-43-234345'
   },
-  { 
-    "id": 4,
-    "name": "Mary Poppendieck", 
-    "number": "39-23-6423122"
+  {
+    id: 4,
+    name: 'Mary Poppendieck',
+    number: '39-23-6423122'
   }
 ]
 
@@ -45,69 +45,60 @@ app.get('/info', (request, response) => {
 app.get('/api/persons', (request, response, next) => {
   Entry.find({}).then(entries => {
     response.json(entries)
-  })
-  .catch(error => next(error))
+  }).catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response, next) => {
-  const { body } = request 
+  const { body } = request
   const { name, number } = body
-  const id = Math.floor(Math.random() * 10001)
-  const person = { id, name, number }
-
-
   if (!name) {
-    return response.status(409).json({ 
-      error: 'name missing' 
+    return response.status(409).json({
+      error: 'name missing'
     })
   }
   if (!number) {
-    return response.status(409).json({ 
-      error: 'number missing' 
+    return response.status(409).json({
+      error: 'number missing'
     })
   }
 
-  const nameExist = persons.some(person => person.name == name)
+  const nameExist = persons.some(person => person.name === name)
   if (nameExist) {
-    return response.status(409).json({ 
+    return response.status(409).json({
       error: 'name must be unique'
     })
   }
   const entry = new Entry({ name, number })
 
-  entry.save()
-  .then(savedEntry => {
+  entry.save().then(savedEntry => {
     response.status(201).json(savedEntry)
-  })
-  .catch(error => next(error))
+  }).catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
-  const person = Entry.findById(id)
-  .then(entry => {
+  Entry.findById(id).then(entry => {
     response.status(201).json(entry)
-  })
-  .catch(error => next(error))
+  }).catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
   const { name, number } = request.body
-  Entry.findOneAndUpdate({ name }, { number }, { new: true, runValidators: true, context: 'query'  })
-  .then(savedEntry => {
-    response.status(201).json(savedEntry)
-  })
-  .catch(error => next(error))
+  Entry.findOneAndUpdate({ name, id }, { number }, { new: true, runValidators: true, context: 'query' })
+    .then(savedEntry => {
+      response.status(201).json(savedEntry)
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
   Entry.findByIdAndDelete(id)
-  .then(result => {
-    response.status(204).end()
-  })
-  .catch(error => next(error))
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 const errorHandler = (error, request, response, next) => {
