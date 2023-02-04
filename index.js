@@ -90,6 +90,16 @@ app.get('/api/persons/:id', (request, response, next) => {
   response.json(person)
 })
 
+app.put('/api/persons/:id', (request, response, next) => {
+  const id = request.params.id
+  const { name, number } = request.body
+  Entry.findOneAndUpdate({ name }, { number }, { new: true })
+  .then(savedEntry => {
+    response.status(201).json(savedEntry)
+  })
+  .catch(error => next(error))
+})
+
 app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
   Entry.findByIdAndDelete(id)
@@ -103,7 +113,9 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message)
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
-  } 
+  } else {
+    return response.status(404).end()
+  }
   next(error)
 }
 app.use(errorHandler)
